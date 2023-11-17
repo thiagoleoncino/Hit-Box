@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7026506151208233574}
   - component: {fileID: 7851318084535105677}
   m_Layer: 6
-  m_Name: Hurtbox_Manager
+  m_Name: Hurtbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -359,7 +359,6 @@ MonoBehaviour:
   rigidBody: {fileID: 0}
   playerObjetive: {fileID: 0}
   KnockDown: 0
-  capsueleCollider: {fileID: 0}
 --- !u!1 &4951740174674172577
 GameObject:
   m_ObjectHideFlags: 0
@@ -731,7 +730,7 @@ GameObject:
   - component: {fileID: 2576071559999597767}
   - component: {fileID: 6352505101147978062}
   m_Layer: 6
-  m_Name: Hitbox_Manager
+  m_Name: Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
