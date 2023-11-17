@@ -62,7 +62,13 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 
     //Anim Tech
     const string recoveryTechAnimation = "25_Recovery_Tech";
-    const string recoveryRollAnimation = "27_Recovery_Roll";
+    const string recoveryRollAnimation = "26_Recovery_Roll";
+
+    //Anim Guard
+    const string guardAnimation = "27_Guard";
+    const string hitGuardAnimation = "28_Hit_Guard";
+    const string stunAnimation = "29_Stun";
+    const string breakAnimation = "30_Break";
     #endregion
 
     //Componentes
@@ -111,63 +117,71 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
         //Acciones Pasivas en Tierra
         if (stateManager.estateGrounded && stateManager.passiveAction)
         {
-            //Idle Pose
-            if (inputManager.idle) 
+            //Bloqueo
+            if (inputManager.buttonBlock)
             {
-                actualAction = "Idle";
-                stateManager.passiveAction = true;
-                ChangeAnimationState(idleAnimation);
-            }
-
-            //Movimiento Horizontal y Salto en Diagonal
-            if (inputManager.buttonRight)
-            {
-                MoveCharacter(statsManager.groundSpeed, "Movimiento", "Salto_Diagonal_1");
-            }
-            else if (inputManager.buttonLeft)
-            {
-                MoveCharacter(-statsManager.groundSpeed, "Movimiento", "Salto_Diagonal_2");
+                Guard();
             }
             else
             {
-                rigidBody.velocity = new Vector3(0, 0, rigidBody.velocity.z);
-            }
+                //Idle Pose
+                if (inputManager.idle)
+                {
+                    actualAction = "Idle";
+                    stateManager.passiveAction = true;
+                    ChangeAnimationState(idleAnimation);
+                }
 
-            //Salto Neutral
-            if (inputManager.buttonJump)
-            {
-                actualAction = "Salto_Neutral";
-                stateManager.cancelableAction = true;
-                ChangeAnimationState(jumpAnimation);
-                rigidBody.velocity = new Vector3(rigidBody.velocity.x, statsManager.jumpPower, rigidBody.velocity.z);
-                inputManager.buttonJump = false;
-                resetJump--;
-            } 
-            
-            //Ataques
-            if (!inputManager.buttonTrigger)
-            {
-                if (inputManager.buttonPunch)
+                //Movimiento Horizontal y Salto en Diagonal
+                if (inputManager.buttonRight)
                 {
-                  Attack("Puño_1", true, false, punch1Animation);
+                    MoveCharacter(statsManager.groundSpeed, "Movimiento", "Salto_Diagonal_1");
                 }
-                if (inputManager.buttonKick)
+                else if (inputManager.buttonLeft)
                 {
-                  Attack("Patada_1", true, false, kick1Animation);
+                    MoveCharacter(-statsManager.groundSpeed, "Movimiento", "Salto_Diagonal_2");
                 }
-            }
+                else
+                {
+                    rigidBody.velocity = new Vector3(0, 0, rigidBody.velocity.z);
+                }
 
-            //Acciones dentro del Boton de Accion
-            if (inputManager.buttonTrigger)
-            {
-                //Ataques Unicos
-                if (inputManager.buttonPunch)
+                //Salto Neutral
+                if (inputManager.buttonJump)
                 {
-                  Attack("Puño_Unico", false, true, uniquePunchAnimation);
+                    actualAction = "Salto_Neutral";
+                    stateManager.cancelableAction = true;
+                    ChangeAnimationState(jumpAnimation);
+                    rigidBody.velocity = new Vector3(rigidBody.velocity.x, statsManager.jumpPower, rigidBody.velocity.z);
+                    inputManager.buttonJump = false;
+                    resetJump--;
                 }
-                if (inputManager.buttonKick)
+
+                //Ataques
+                if (!inputManager.buttonTrigger)
                 {
-                  Attack("Patada_Unico", false, true, uniqueKickAnimation);
+                    if (inputManager.buttonPunch)
+                    {
+                        Attack("Puño_1", true, false, punch1Animation);
+                    }
+                    if (inputManager.buttonKick)
+                    {
+                        Attack("Patada_1", true, false, kick1Animation);
+                    }
+                }
+
+                //Acciones dentro del Boton de Accion
+                if (inputManager.buttonTrigger)
+                {
+                    //Ataques Unicos
+                    if (inputManager.buttonPunch)
+                    {
+                        Attack("Puño_Unico", false, true, uniquePunchAnimation);
+                    }
+                    if (inputManager.buttonKick)
+                    {
+                        Attack("Patada_Unico", false, true, uniqueKickAnimation);
+                    }
                 }
             }
         }
@@ -394,7 +408,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 Hitstun(hitstunLauncherAnimation);
             }
         }
-    } //Para solucionar problema
+    }
     void Hitstun(string anim)
     {
         ChangeAnimationState(anim);
@@ -441,6 +455,14 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
         rigidBody.velocity = new Vector3(Roll, rigidBody.velocity.y, rigidBody.velocity.z);
         rigidBody.constraints = rigidBody.constraints | RigidbodyConstraints.FreezePositionY;
         Physics.IgnoreLayerCollision(6, 6, true);
+    }
+
+    void Guard()
+    {
+        actualAction = "Guard";
+        stateManager.passiveAction = true;
+        ChangeAnimationState(guardAnimation);
+        rigidBody.velocity = new Vector3(0, 0, 0);
     }
 
     //Fisicas de los Ataques Especiales
