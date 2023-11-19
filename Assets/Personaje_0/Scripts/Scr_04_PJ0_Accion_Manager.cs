@@ -318,6 +318,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
             rightAnimation = walkBackwardAnimation;
         }
     } //Girar Animaciones
+
     void ActionMoveCharacter(float dir, string moveAction, string jumpAction)
     {
         actualAction = moveAction;
@@ -351,6 +352,8 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
             fisicasManager.FisicasStop();
         }
     } //Ataques Normales, Strings y Especiales
+    
+    //Hitstun
     public void ActionChangeHitstun()
     {
         //Hitbox Comun
@@ -398,11 +401,9 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
     {
         ActionChangeAnimationState(anim);
         animationManager.HandleShake();
-    } //Hitstun
-    public void ActionReiniciar() 
-    {
-        animator.Play(actualAnimation, 0, 0f);
-    } //Reinicar Animacion de Hitstun
+    } 
+
+    //Knockdown
     public void ActionKnockdown()
     {
         ActionChangeAnimationState(hitstunKnockdownAnimation);
@@ -436,6 +437,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 
         fisicasManager.FisicasRoll(speed);
     }
+
     void ActionGuard()
     {
         actualAction = "Guard";
@@ -444,4 +446,8 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 
         fisicasManager.FisicasStop();
     }
+    public void ActionReiniciar()
+    {
+        animator.Play(actualAnimation, 0, 0f);
+    } //Reinicar Animacion de Hitstun
 }

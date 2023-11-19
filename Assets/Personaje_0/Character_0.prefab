@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7026506151208233574}
   - component: {fileID: 7851318084535105677}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Hurtbox
-  m_TagString: Untagged
+  m_TagString: Tag_Player_1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,9 +66,9 @@ GameObject:
   - component: {fileID: 2990972676077245023}
   - component: {fileID: 8562457876188000524}
   - component: {fileID: 3124116008692793579}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Hitbox_1
-  m_TagString: Untagged
+  m_TagString: Hitbox_Player_1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -357,8 +357,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actualAction: 
-  rigidBody: {fileID: 0}
   playerObjetive: {fileID: 0}
+  leftAnimation: 
   KnockDown: 0
 --- !u!114 &4583464871734049527
 MonoBehaviour:
@@ -372,6 +372,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37421cf87e1624e4d867ca863d5c7d03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigidBody: {fileID: 0}
+  resetJump: 0
 --- !u!1 &4951740174674172577
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,7 +419,7 @@ SpriteRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4951740174674172577}
   m_Enabled: 1
-  m_CastShadows: 0
+  m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -429,7 +431,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 966f3d5ee4044334ab7967c9fabea7f2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -499,7 +501,7 @@ MonoBehaviour:
   shakeAmount: 0
   proyectilPJ0: {fileID: 2625085571056117527, guid: a34b85d1b7c44e748a51d64a627ae949, type: 3}
   especialNeutral: {fileID: 441819816706419326}
-  NewFloat: 0
+  NewFloat: 100
 --- !u!1 &5635341757826940835
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,9 +514,9 @@ GameObject:
   - component: {fileID: 7319472244209158159}
   - component: {fileID: 7834141724883593881}
   - component: {fileID: 4449817487309058474}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Hitbox_2
-  m_TagString: Untagged
+  m_TagString: Hitbox_Player_1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -630,9 +632,9 @@ GameObject:
   - component: {fileID: 234017491145543709}
   - component: {fileID: 6581687873975799335}
   - component: {fileID: 9095267298275570441}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Hurtbox_Cabeza
-  m_TagString: Untagged
+  m_TagString: Tag_Player_1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -659,7 +661,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6916312660225962555}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -742,9 +744,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2576071559999597767}
   - component: {fileID: 6352505101147978062}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Hitbox
-  m_TagString: Untagged
+  m_TagString: Hitbox_Player_1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -778,7 +780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b1e2d72ed67fa8499b5ccc4a153ce9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PurebaHitstunDebil: 1
+  PurebaHitstunDebil: 0
   hitBox01: {fileID: 3124116008692793579}
   hitBox02: {fileID: 4449817487309058474}
   hitboxApagar: 0
@@ -828,8 +830,8 @@ MonoBehaviour:
   - attackDamage: 0
     attackStun: 10
     attackShake: 0
-    attackKnockbackX: 5
-    attackKnockbackY: 5
+    attackKnockbackX: 100
+    attackKnockbackY: 0
   airKick:
   - attackDamage: 0
     attackStun: 10

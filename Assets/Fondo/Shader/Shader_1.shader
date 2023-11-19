@@ -1,4 +1,4 @@
-Shader "Sprites/Custom/SpriteShadow"
+Shader"Sprites/Custom/SpriteShadow"
 {
     Properties
     {
@@ -23,43 +23,50 @@ Shader "Sprites/Custom/SpriteShadow"
             "CanUseSpriteAtlas"="True"
         }
 
-        Cull Off
-        Lighting Off
-        ZWrite Off
-        Blend One OneMinusSrcAlpha
+Cull Off
+
+Lighting Off
+
+ZWrite Off
+
+Blend One
+OneMinusSrcAlpha
 
         CGPROGRAM
         #pragma surface surf Lambert vertex:vert alphatest:_Cutoff addshadow nofog nolightmap nodynlightmap keepalpha noinstancing
         #pragma multi_compile_local _ PIXELSNAP_ON
         #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
-        #include "UnitySprites.cginc"
+#include "UnitySprites.cginc"
 
-        struct Input
-        {
-            float2 uv_MainTex;
-            fixed4 color;
-        };
+struct Input
+{
+    float2 uv_MainTex;
+    fixed4 color;
+};
 
-        void vert (inout appdata_full v, out Input o)
-        {
-            v.vertex = UnityFlipSprite(v.vertex, _Flip);
+void vert(inout appdata_full v, out Input o)
+{
+    v.vertex = UnityFlipSprite(v.vertex, _Flip);
 
-            #if defined(PIXELSNAP_ON)
+#if defined(PIXELSNAP_ON)
             v.vertex = UnityPixelSnap (v.vertex);
-            #endif
+#endif
 
-            UNITY_INITIALIZE_OUTPUT(Input, o);
-            o.color = v.color * _Color * _RendererColor;
-        }
+    UNITY_INITIALIZE_OUTPUT(Input, o);
+    o.color = v.color * _Color * _RendererColor;
+}
 
-        void surf (Input IN, inout SurfaceOutput o)
-        {
-            fixed4 c = SampleSpriteTexture (IN.uv_MainTex) * IN.color;
-            o.Albedo = c.rgb * c.a;
-            o.Alpha = c.a;
-        }
+void surf(Input IN, inout SurfaceOutput o)
+{
+    fixed4 c = SampleSpriteTexture(IN.uv_MainTex) * IN.color;
+    o.Albedo = c.rgb * c.a;
+    o.Alpha = c.a;
+}
+
+
+
         ENDCG
     }
 
-Fallback "Transparent/VertexLit"
+Fallback"Transparent/VertexLit"
 }
