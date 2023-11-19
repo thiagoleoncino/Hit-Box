@@ -8,6 +8,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
     private Scr_04_PJ0_Accion_Manager actionManager;
     private Scr_06_PJ0_Hitbox_Manager hitboxManager;
     private Scr_08_PJ0_Hurtbox_Manager hurtboxManager;
+    private Scr_10_Fisicas_Manager fisicasManager;
 
     //Componentes
     private Animator animator;
@@ -34,6 +35,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
         actionManager = GetComponentInParent<Scr_04_PJ0_Accion_Manager>();
         hitboxManager = GetComponentInChildren<Scr_06_PJ0_Hitbox_Manager>();
         hurtboxManager = GetComponentInChildren<Scr_08_PJ0_Hurtbox_Manager>();
+        fisicasManager = GetComponentInParent<Scr_10_Fisicas_Manager>();
         animator = GetComponent<Animator>();
     }
 
@@ -51,7 +53,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
             boolStop = false;
             animator.speed = 1f;
             transform.position = originalPosition;
-            actionManager.rigidBody.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY);
+            fisicasManager.rigidBody.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY);
         }
     }
 
@@ -60,7 +62,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
         boolStop = true;
         stopTime = hitboxManager.PurebaHitstunDebil;
         animator.speed = 0f;
-        actionManager.rigidBody.constraints |= RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY;
+        fisicasManager.rigidBody.constraints |= RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY;
         Debug.Log("HandleHit");
     }
 
@@ -104,7 +106,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
     }
     public void StartKnockback()
     {
-        actionManager.Knockback();
+        fisicasManager.FisicasKnockback();
     }
     public void EndHitstun()
     {
@@ -112,12 +114,12 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
         hurtboxManager.hurtboxApagar = true;
         hurtboxManager.hurtboxHit = false;
         Physics.IgnoreLayerCollision(6, 6, false);
-        actionManager.rigidBody.constraints &= ~RigidbodyConstraints.FreezePositionY;
+        fisicasManager.rigidBody.constraints &= ~RigidbodyConstraints.FreezePositionY;
     }
 
     public void StartKnocdkown()
     {
-        actionManager.Knockdown();
+        actionManager.ActionKnockdown();
     }
 
     public void EndKnocdkown()
@@ -135,7 +137,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
     //Ataques Especiales
     public void Anim_Especial_Abajo()
     {
-        actionManager.Especial_Abajo();
+        fisicasManager.FisicasEspecialAbajo();
     }
     public void Anim_Especial_Neutral()
     {
@@ -152,7 +154,7 @@ public class Scr_05_PJ0_Anim_Manager : MonoBehaviour
     }
     public void Anim_Especial_Arriba()
     {
-        actionManager.Especial_Arriba();
+        fisicasManager.FisicasEspecialArriba();
     }
 
     #endregion

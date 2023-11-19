@@ -30,7 +30,7 @@ public class Scr_08_PJ0_Hurtbox_Manager: MonoBehaviour
 
     void HandleHitCountChanged()
     {
-        actionManager.Reiniciar();
+        actionManager.ActionReiniciar();
     }
 
     private void Update()

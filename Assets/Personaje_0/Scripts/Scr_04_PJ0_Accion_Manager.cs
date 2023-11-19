@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 {
-
     //Scripts 1
     private Scr_01_Control_Manager inputManager;
     private Scr_02_Estado_Manager stateManager;
     private Scr_03_Estadisticas statsManager;
+    private Scr_10_Fisicas_Manager fisicasManager;
 
     //Scripts 2
     private Scr_05_PJ0_Anim_Manager animationManager;
@@ -73,33 +73,26 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 
     //Componentes
     [HideInInspector]
-    public Rigidbody rigidBody;
     private Animator animator;
 
     //Rotación
     public GameObject playerObjetive;
-    private Vector3 vectorLeft;
-    private Vector3 vectorRight;
-    private string leftAnimation;
+    public string leftAnimation;
     private string rightAnimation;
 
-    //Restablecer Saltos
-    private int resetJump;
     public bool KnockDown;
  
     void Awake()
     {
-        rigidBody = GetComponent<Rigidbody>();
         inputManager = GetComponent<Scr_01_Control_Manager>();
         statsManager = GetComponent<Scr_03_Estadisticas>();
+        fisicasManager = GetComponent<Scr_10_Fisicas_Manager>();
 
         animator = GetComponentInChildren<Animator>();
         animationManager = GetComponentInChildren<Scr_05_PJ0_Anim_Manager>();
         stateManager = GetComponentInChildren<Scr_02_Estado_Manager>();
         hitboxManager = GetComponentInChildren<Scr_06_PJ0_Hitbox_Manager>();
         hurtboxManager = GetComponentInChildren<Scr_08_PJ0_Hurtbox_Manager>();
-
-        resetJump = statsManager.jumpAmount;
     }
 
     private void FixedUpdate()
@@ -107,11 +100,8 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
         //Acciones en Tierra
         if(stateManager.estateGrounded)
         {
-            //Reseta la cantidad de saltos disponibles
-            resetJump = statsManager.jumpAmount; 
-
             //Girar sobre si mismo
-            TurnAround();
+            ActionTurnAround();
         }
 
         //Acciones Pasivas en Tierra
@@ -120,7 +110,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
             //Bloqueo
             if (inputManager.buttonBlock)
             {
-                Guard();
+                ActionGuard();
             }
             else
             {
@@ -129,21 +119,21 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 {
                     actualAction = "Idle";
                     stateManager.passiveAction = true;
-                    ChangeAnimationState(idleAnimation);
+                    ActionChangeAnimationState(idleAnimation);
                 }
 
                 //Movimiento Horizontal y Salto en Diagonal
                 if (inputManager.buttonRight)
                 {
-                    MoveCharacter(statsManager.groundSpeed, "Movimiento", "Salto_Diagonal_1");
+                    ActionMoveCharacter(1, "Movimiento", "Salto_Diagonal_1");
                 }
                 else if (inputManager.buttonLeft)
                 {
-                    MoveCharacter(-statsManager.groundSpeed, "Movimiento", "Salto_Diagonal_2");
+                    ActionMoveCharacter(-1, "Movimiento", "Salto_Diagonal_2");
                 }
                 else
                 {
-                    rigidBody.velocity = new Vector3(0, 0, rigidBody.velocity.z);
+                    fisicasManager.FisicasStop();
                 }
 
                 //Salto Neutral
@@ -151,10 +141,10 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 {
                     actualAction = "Salto_Neutral";
                     stateManager.cancelableAction = true;
-                    ChangeAnimationState(jumpAnimation);
-                    rigidBody.velocity = new Vector3(rigidBody.velocity.x, statsManager.jumpPower, rigidBody.velocity.z);
+                    ActionChangeAnimationState(jumpAnimation);
                     inputManager.buttonJump = false;
-                    resetJump--;
+                    
+                    fisicasManager.FisicasJump();
                 }
 
                 //Ataques
@@ -162,11 +152,11 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 {
                     if (inputManager.buttonPunch)
                     {
-                        Attack("Puño_1", true, false, punch1Animation);
+                        ActionAttack("Puño_1", true, false, punch1Animation);
                     }
                     if (inputManager.buttonKick)
                     {
-                        Attack("Patada_1", true, false, kick1Animation);
+                        ActionAttack("Patada_1", true, false, kick1Animation);
                     }
                 }
 
@@ -176,11 +166,11 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                     //Ataques Unicos
                     if (inputManager.buttonPunch)
                     {
-                        Attack("Puño_Unico", false, true, uniquePunchAnimation);
+                        ActionAttack("Puño_Unico", false, true, uniquePunchAnimation);
                     }
                     if (inputManager.buttonKick)
                     {
-                        Attack("Patada_Unico", false, true, uniqueKickAnimation);
+                        ActionAttack("Patada_Unico", false, true, uniqueKickAnimation);
                     }
                 }
             }
@@ -192,36 +182,36 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
             //Caer
             actualAction = "Caer";
             stateManager.passiveAction = true;
-            ChangeAnimationState(fallAnimation);
+            ActionChangeAnimationState(fallAnimation);
         }
 
         //Acciones Cancelables en Aire
         if (stateManager.estateAirborn && stateManager.cancelableAction || stateManager.estateAirborn && stateManager.passiveAction)
         {
             //Doble Salto
-            if (inputManager.buttonJump && resetJump > 0)
+            if (inputManager.buttonJump && fisicasManager.resetJump > 0)
             {
                 actualAction = "Salto_Doble";
                 stateManager.cancelableAction = true;
-                ChangeAnimationState(doubleJumpAnimation);
-                rigidBody.velocity = new Vector3(rigidBody.velocity.x, statsManager.jumpPower, rigidBody.velocity.z);
-                resetJump--;
+                ActionChangeAnimationState(doubleJumpAnimation);
+
+                fisicasManager.FisicasJump();
             }
 
             //Ataques Normales
             if (inputManager.buttonPunch)
             {
-                Attack("Puño_Aire", true, false, airPunchAnimation);
+                ActionAttack("Puño_Aire", true, false, airPunchAnimation);
             }
             if (inputManager.buttonKick)
             {
-                Attack("Patada_Aire", true, false, airKickAnimation);
+                ActionAttack("Patada_Aire", true, false, airKickAnimation);
             }
 
             //Ataque Especial
             if (inputManager.buttonSpecial)
             {
-                Attack("Especial_Aereo", false, true, specialAirAnimation);
+                ActionAttack("Especial_Aereo", false, true, specialAirAnimation);
             }
         } 
 
@@ -234,7 +224,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 //1+1
                 if (inputManager.buttonPunch)
                 {
-                    Attack("Puño_2", true, false, punch2Animation);
+                    ActionAttack("Puño_2", true, false, punch2Animation);
                 }
             }
             //String 1+1+
@@ -243,12 +233,12 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 //1+1+1
                 if (inputManager.buttonPunch)
                 {
-                    Attack("Puño_3", false, true, punch3Animation);
+                    ActionAttack("Puño_3", false, true, punch3Animation);
                 }
                 //1+1+2
                 if (inputManager.buttonKick)
                 {
-                    Attack("Puño_4", false, true, punch4Animation);
+                    ActionAttack("Puño_4", false, true, punch4Animation);
                 }
             }
             //String 2+
@@ -257,7 +247,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
                 //2+2
                 if (inputManager.buttonKick)
                 {
-                    Attack("Patada_2", true, false, kick2Animation);
+                    ActionAttack("Patada_2", true, false, kick2Animation);
                 }
             }
         }
@@ -270,14 +260,14 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
             {
                 if (inputManager.buttonSpecial)
                 {
-                    Attack("Especial_Abajo", false, true, specialDownAnimation);
+                    ActionAttack("Especial_Abajo", false, true, specialDownAnimation);
                 }
             }
 
             //Especial Neutral
             if (!inputManager.buttonDown && !inputManager.buttonUp && inputManager.buttonSpecial)
             {
-                Attack("Especial_Neutral", false, true, specialNeutralAnimation);
+                ActionAttack("Especial_Neutral", false, true, specialNeutralAnimation);
             }
 
             //Especial Arriba
@@ -285,7 +275,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
             {
                 if (inputManager.buttonSpecial)
                 {
-                    Attack("Especial_Arriba", false, true, specialUpAnimation);
+                    ActionAttack("Especial_Arriba", false, true, specialUpAnimation);
                 }
             }
         }
@@ -293,7 +283,7 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
         //Hitstun
         if(hurtboxManager.hurtboxHit || stateManager.noCancelableAction && hurtboxManager.hurtboxHit)
         {
-            ChangeHitstun();
+            ActionChangeHitstun();
         }
 
         if (stateManager.passiveAction)
@@ -303,70 +293,65 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 
         if(KnockDown)
         {
-           KnockdownState();
+           ActionKnockdownState();
         }
     }
 
     //Important Voids
-    public void ChangeAnimationState(string newAnimation) //Cambio de Animaciones
+    public void ActionChangeAnimationState(string newAnimation) //Cambio de Animaciones
     {
         if (actualAnimation == newAnimation) return;
 
         animator.Play(newAnimation);
         actualAnimation = newAnimation;
     }
-    void TurnAround()
+    void ActionTurnAround()
     {
         if (playerObjetive.transform.position.x > transform.position.x)
         {
-            transform.eulerAngles = new Vector3(0, 0, 0);
-            vectorLeft = Vector3.left;
-            vectorRight = Vector3.right;
             leftAnimation = walkBackwardAnimation;
             rightAnimation = walkForwardAnimation;
         }
         if (playerObjetive.transform.position.x < transform.position.x)
         {
-            transform.eulerAngles = new Vector3(0, 180, 0);
-            vectorLeft = Vector3.right;
-            vectorRight = Vector3.left;
             leftAnimation = walkForwardAnimation;
             rightAnimation = walkBackwardAnimation;
         }
-    } //Girar
-    void MoveCharacter(float speed, string moveAction, string jumpAction)
+    } //Girar Animaciones
+    void ActionMoveCharacter(float dir, string moveAction, string jumpAction)
     {
         actualAction = moveAction;
         stateManager.passiveAction = true;
-        ChangeAnimationState(speed > 0 ? rightAnimation : leftAnimation);
-        rigidBody.velocity = new Vector3(speed, rigidBody.velocity.y, rigidBody.velocity.z);
+        ActionChangeAnimationState(dir > 0 ? rightAnimation : leftAnimation);
+
+        fisicasManager.FisicasWalk(dir);
 
         if (inputManager.buttonJump)
         {
             actualAction = jumpAction;
             stateManager.cancelableAction = true;
-            ChangeAnimationState(jumpAnimation);
-            rigidBody.velocity = new Vector3(speed, statsManager.jumpPower, rigidBody.velocity.z);
+            ActionChangeAnimationState(jumpAnimation);
             inputManager.buttonJump = false;
-            resetJump--;
+
+            fisicasManager.FisicasDiagonalJump(dir);
         }
     } //Movimiento horizontal y diagonal
-    void Attack(string action, bool semiCancelable, bool noCancelable, string anim)
+    void ActionAttack(string action, bool semiCancelable, bool noCancelable, string anim)
     {
         actualAction = "Ataque_" + action;
         stateManager.semiCancelableAction = semiCancelable;
         stateManager.noCancelableAction = noCancelable;
-        ChangeAnimationState(anim);
+        ActionChangeAnimationState(anim);
         inputManager.buttonPunch = false;
         inputManager.buttonKick = false;
         animator.speed = 1f; //Para que la animacion no se congele con el HitStop
 
         if (stateManager.estateGrounded)
         {
-            rigidBody.velocity = new Vector3(0, 0, 0);
+            fisicasManager.FisicasStop();
         }
     } //Ataques Normales, Strings y Especiales
-    public void ChangeHitstun()
+    public void ActionChangeHitstun()
     {
         //Hitbox Comun
         actualAction = "Hurt";
@@ -377,23 +362,23 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
         {
             if (hurtboxManager.hurtobxManagerAnim == "Alto")
             {
-                Hitstun(hitstunHighAnimation);
+                ActionHitstun(hitstunHighAnimation);
             }
             if (hurtboxManager.hurtobxManagerAnim == "Medio")
             {
-                Hitstun(hitstunMediumAnimation);
+                ActionHitstun(hitstunMediumAnimation);
             }
             if (hurtboxManager.hurtobxManagerAnim == "Bajo")
             {
-                Hitstun(hitstunLowAnimation);
+                ActionHitstun(hitstunLowAnimation);
             }
             if (hurtboxManager.hurtobxManagerAnim == "Trip")
             {
-                Hitstun(hitstunTripAnimation);
+                ActionHitstun(hitstunTripAnimation);
             }
             if (hurtboxManager.hurtobxManagerAnim == "Launcher")
             {
-                Hitstun(hitstunLauncherAnimation);
+                ActionHitstun(hitstunLauncherAnimation);
             }
         }
 
@@ -401,36 +386,32 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
         {
             if (hurtboxManager.hurtobxManagerAnim == "Alto" || hurtboxManager.hurtobxManagerAnim == "Medio" || hurtboxManager.hurtobxManagerAnim == "Bajo")
             {
-                Hitstun(hitstunAirAnimation);
+                ActionHitstun(hitstunAirAnimation);
             }
             if (hurtboxManager.hurtobxManagerAnim == "Launcher")
             {
-                Hitstun(hitstunLauncherAnimation);
+                ActionHitstun(hitstunLauncherAnimation);
             }
         }
     }
-    void Hitstun(string anim)
+    void ActionHitstun(string anim)
     {
-        ChangeAnimationState(anim);
+        ActionChangeAnimationState(anim);
         animationManager.HandleShake();
     } //Hitstun
-    public void Reiniciar() 
+    public void ActionReiniciar() 
     {
         animator.Play(actualAnimation, 0, 0f);
     } //Reinicar Animacion de Hitstun
-    public void Knockback()
+    public void ActionKnockdown()
     {
-        rigidBody.velocity = new Vector3(hurtboxManager.hurtobxManagerKnockback.x * vectorLeft.x, hurtboxManager.hurtobxManagerKnockback.y, rigidBody.velocity.z);
+        ActionChangeAnimationState(hitstunKnockdownAnimation);
     }
-    public void Knockdown()
-    {
-        ChangeAnimationState(hitstunKnockdownAnimation);
-    }
-    public void KnockdownState()
+    public void ActionKnockdownState()
     {
         if(inputManager.buttonUp)
         {
-            ChangeAnimationState(recoveryTechAnimation);
+            ActionChangeAnimationState(recoveryTechAnimation);
             hurtboxManager.hurtboxHit = false;
             animator.speed = 1f;
             KnockDown = false;
@@ -438,41 +419,29 @@ public class Scr_04_PJ0_Accion_Manager : MonoBehaviour
 
         if (inputManager.buttonLeft)
         {
-            Roll(-statsManager.rollDistance);
+            ActionRoll(-statsManager.rollDistance);
         }
 
         if (inputManager.buttonRight)
         {
-            Roll(statsManager.rollDistance);
+            ActionRoll(statsManager.rollDistance);
         }
     }
-    public void Roll(float Roll)
+    public void ActionRoll(float speed)
     {
-        ChangeAnimationState(recoveryRollAnimation);
+        ActionChangeAnimationState(recoveryRollAnimation);
         hurtboxManager.hurtboxHit = false;
         animator.speed = 1f;
         KnockDown = false;
-        rigidBody.velocity = new Vector3(Roll, rigidBody.velocity.y, rigidBody.velocity.z);
-        rigidBody.constraints = rigidBody.constraints | RigidbodyConstraints.FreezePositionY;
-        Physics.IgnoreLayerCollision(6, 6, true);
-    }
 
-    void Guard()
+        fisicasManager.FisicasRoll(speed);
+    }
+    void ActionGuard()
     {
         actualAction = "Guard";
         stateManager.passiveAction = true;
-        ChangeAnimationState(guardAnimation);
-        rigidBody.velocity = new Vector3(0, 0, 0);
-    }
+        ActionChangeAnimationState(guardAnimation);
 
-    //Fisicas de los Ataques Especiales
-    public void Especial_Abajo()
-    {
-        rigidBody.velocity = new Vector3(10 * vectorRight.x, rigidBody.velocity.y, rigidBody.velocity.z);
+        fisicasManager.FisicasStop();
     }
-    public void Especial_Arriba()
-    {
-        rigidBody.velocity = new Vector3(rigidBody.velocity.x, 20, rigidBody.velocity.z);
-    }
-
 }

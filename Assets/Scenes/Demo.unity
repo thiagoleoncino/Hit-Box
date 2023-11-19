@@ -294,6 +294,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 4583464871734049527, guid: b933d2076e2f5ac4f80dc97ac2654cfd, type: 3}
+      propertyPath: playerObjetive
+      value: 
+      objectReference: {fileID: 1680041740}
     - target: {fileID: 5635341757826940835, guid: b933d2076e2f5ac4f80dc97ac2654cfd, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -1099,6 +1103,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 4583464871734049527, guid: b933d2076e2f5ac4f80dc97ac2654cfd, type: 3}
+      propertyPath: playerObjetive
+      value: 
+      objectReference: {fileID: 376644680}
     - target: {fileID: 5635341757826940835, guid: b933d2076e2f5ac4f80dc97ac2654cfd, type: 3}
       propertyPath: m_Layer
       value: 0

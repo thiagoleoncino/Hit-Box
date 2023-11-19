@@ -361,6 +361,7 @@
 "Assets/Personaje_0/Scripts/Scr_07_PJ0_Hitbox.cs"
 "Assets/Personaje_0/Scripts/Scr_08_PJ0_Hurtbox_Manager.cs"
 "Assets/Personaje_0/Scripts/Scr_09_PJ0_Hurtbox.cs"
+"Assets/Personaje_0/Scripts/Scr_10_Fisicas_Manager.cs"
 "Assets/Personaje_0/Sprite/000 - Proyectiles/Scr_Ryu_Proyectil.cs"
 "Assets/Scr_Prueba.cs"
 "Assets/Tiles/Scr_Tiles_Manager.cs"
